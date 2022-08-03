@@ -13,6 +13,11 @@ spring:
       #password: password
       password: 12345678
       #password: 831220yh
+  redis:
+    host: 39.106.131.193
+    port: 6379
+    password: 123456
+    database: 0
   web:
     resources:
       add-mappings: true
@@ -25,5 +30,5 @@ mybatis-plus:
     db-config:
       id-type: ASSIGN_ID
 reggie:
-  path: //home//yanhao//reggiePhoto//
-  #path: H:\WorkSpaceIDEA\ReggieImage\
+  #path: //home//yanhao//reggiePhoto//
+  path: H:\WorkSpaceIDEA\ReggieImage\
