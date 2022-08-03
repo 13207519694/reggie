@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,6 +45,7 @@ public class SetmealController {
      * @return
      */
     @PostMapping
+    @CacheEvict(value = "setmealCache",allEntries = true)
     public R<String> save(@RequestBody SetmealDto setmealDto){
         log.info(setmealDto.toString());
 
@@ -111,6 +114,7 @@ public class SetmealController {
      * @return
      */
     @PutMapping
+    @CacheEvict(value = "setmealCache",allEntries = true)
     public R<String> update(@RequestBody SetmealDto setmealDto){
         setmealService.updateWithDish(setmealDto);
         return R.success("修改套餐成功");
@@ -123,6 +127,7 @@ public class SetmealController {
      * @return
      */
     @DeleteMapping
+    @CacheEvict(value = "setmealCache",allEntries = true)
     public R<String> delete(String ids){
         //ids传的是字符串，没办法直接赋值List集合
         String[] split = ids.split(",");
@@ -160,13 +165,14 @@ public class SetmealController {
     /**
      * 展示在新增套餐时的菜品list列表-------------------新增查询套餐内菜品，返回setmealDto
      * http://localhost:8081/dish/list?categoryId=1397844263642378242
-     * @param categoryId
+     * @param setmeal
      * @return
      */
     @GetMapping("/list")
-    public R<List> list(Long categoryId){
+    @Cacheable(value = "setmealCache",key = "#setmeal.categoryId + '_' + #setmeal.status")
+    public R<List> list(Setmeal setmeal){
         LambdaQueryWrapper<Setmeal> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(categoryId != null,Setmeal::getCategoryId,categoryId)
+        lambdaQueryWrapper.eq(setmeal.getCategoryId() != null,Setmeal::getCategoryId,setmeal.getCategoryId())
                 .eq(Setmeal::getStatus,1)
                 .orderByAsc(Setmeal::getUpdateTime);
         List<Setmeal> setmealListt = setmealService.list(lambdaQueryWrapper);
@@ -175,7 +181,7 @@ public class SetmealController {
             SetmealDto setmealDto = new SetmealDto();
             BeanUtils.copyProperties(item,setmealDto);
 
-            Category category = categoryService.getById(categoryId);
+            Category category = categoryService.getById(setmealDto.getCategoryId());
             if (category != null){
                 String categoryName = category.getName();
                 setmealDto.setCategoryName(categoryName);
