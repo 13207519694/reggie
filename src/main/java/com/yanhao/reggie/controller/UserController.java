@@ -36,24 +36,26 @@ public class UserController {
      */
     @PostMapping("/sendMsg")
     public R<String> sendMsg(@RequestBody User user, HttpSession session){
-        //获取手机号
-        String phone = user.getPhone();
+            //获取手机号
+            String phone = user.getPhone();
 
-        if(StringUtils.isNotEmpty(phone)){
-            //生成随机的4位验证码
-            String code = ValidateCodeUtils.generateValidateCode(4).toString();
-            log.info("code={}",code);
+            if(StringUtils.isNotEmpty(phone)){
+                //生成随机的4位验证码
+                String code = ValidateCodeUtils.generateValidateCode(4).toString();
+                log.info("code={}",code);
 
-            //调用阿里云提供的短信服务API完成发送短信
-            //SMSUtils.sendMessage("瑞吉外卖","",phone,code);
+                //调用阿里云提供的短信服务API完成发送短信
+                //SMSUtils.sendMessage("瑞吉外卖","",phone,code);
 
-            //需要将生成的验证码保存到Session
-            session.setAttribute(phone,code);
+                //把code变成图片
 
-            return R.success("手机验证码短信发送成功");
-        }
+                //需要将生成的验证码保存到Session
+                session.setAttribute(phone,code);
 
-        return R.error("短信发送失败");
+                return R.success(code);
+            }
+
+            return R.error("短信发送失败");
     }
 
     /**
@@ -91,9 +93,21 @@ public class UserController {
                 userService.save(user);
             }
             session.setAttribute("user",user.getId());
+            log.info(user.getId().toString());
             return R.success(user);
         }
         return R.error("登录失败");
+    }
+
+    /**
+     * 退出登录
+     * @param session
+     * @return
+     */
+    @PostMapping("/logout")
+    public R<String> logout( HttpSession session){
+        session.removeAttribute("user");
+        return R.success("退出登录成功");
     }
 
 }

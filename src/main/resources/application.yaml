@@ -5,10 +5,14 @@ spring:
     name: reggie_take_out
   datasource:
     druid:
-      driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://localhost:3306/reggie?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+      driver-class-name: com.mysql.jdbc.Driver
+      #url: jdbc:mysql://10.53.9.38:3306/reggie?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+      url: jdbc:mysql://39.106.131.193:3306/reggie?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+      #url: jdbc:mysql://localhost:3306/reggie?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
       username: root
-      password: 831220ydd
+      #password: password
+      password: 12345678
+      #password: 831220yh
   web:
     resources:
       add-mappings: true
@@ -21,4 +25,5 @@ mybatis-plus:
     db-config:
       id-type: ASSIGN_ID
 reggie:
-  path: H:\WorkSpaceIDEA\ReggieImage\
+  path: //home//yanhao//reggiePhoto//
+  #path: H:\WorkSpaceIDEA\ReggieImage\

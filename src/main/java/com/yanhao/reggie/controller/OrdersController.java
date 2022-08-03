@@ -2,9 +2,12 @@ package com.yanhao.reggie.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.yanhao.reggie.common.BaseContext;
 import com.yanhao.reggie.common.R;
 import com.yanhao.reggie.dto.OrdersDto;
+import com.yanhao.reggie.entity.OrderDetail;
 import com.yanhao.reggie.entity.Orders;
+import com.yanhao.reggie.service.OrderDetailService;
 import com.yanhao.reggie.service.OrdersService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -29,14 +32,17 @@ public class OrdersController {
 
     @Autowired
     private OrdersService ordersService;
+    @Autowired
+    private OrderDetailService orderDetailService;
 
     @GetMapping(value = {"/page","/userPage"})
-    public R<Page> page(int page, int pageSize, String number){
+    public R<Page> page(int page, int pageSize){
         Page<Orders> pageInfo = new Page<>(page,pageSize);
         Page<OrdersDto> ordersDtoPage = new Page<>();
 
+        String userId = BaseContext.getCurrentId().toString();
         LambdaQueryWrapper<Orders> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.like(StringUtils.isNotEmpty(number), Orders::getNumber,number)
+        lambdaQueryWrapper.eq(Orders::getUserId,userId)
                 .orderByDesc(Orders::getOrderTime);
         pageInfo = ordersService.page(pageInfo,lambdaQueryWrapper);
 
@@ -46,12 +52,10 @@ public class OrdersController {
         List<OrdersDto> ordersDtoPageRecords = records.stream().map(item -> {
             OrdersDto ordersDto = new OrdersDto();
             BeanUtils.copyProperties(item,ordersDto);
-//            Long categoryId = item.getCategoryId();
-//            Category category = categoryService.getById(categoryId);
-//            if (category != null){
-//                String categoryName = category.getName();
-//                ordersDto.setCategoryName(categoryName);
-//            }
+            LambdaQueryWrapper<OrderDetail> orderDetailLambdaQueryWrapper = new LambdaQueryWrapper<>();
+            orderDetailLambdaQueryWrapper.eq(OrderDetail::getOrderId,item.getId());
+            List<OrderDetail> orderDetails = orderDetailService.list(orderDetailLambdaQueryWrapper);
+            ordersDto.setOrderDetails(orderDetails);
             return ordersDto;
         }).collect(Collectors.toList());
 

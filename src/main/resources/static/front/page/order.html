@@ -86,6 +86,7 @@
             computed:{},
             created(){
                 this.initData()
+                console.log("created getlist")
             },
             mounted(){},
             methods:{
@@ -109,23 +110,27 @@
                         return
                     }
                     const res = await orderPagingApi(this.paging)
+                    console.log("unknow getlist")
                     if(res.code === 1){
-                        this.orderList.push(...res.data.records)
-                        let records = res.data.records
-                        if(records && Array.isArray(records)){
-                            records.forEach(item=>{
-                                let number = 0
-                                item.orderDetails.forEach(ele=>{
-                                    number += ele.number
-                                })
+                        //if(this.orderList.length == 0){
+                            this.orderList.push(...res.data.records)
+                            let records = res.data.records
+                            if(records && Array.isArray(records)){
+                                records.length
+                                records.forEach(item=>{
+                                    let number = 0
+                                    item.orderDetails.forEach(ele=>{
+                                        number += ele.number
+                                    })
                                 item.sumNum = number
                             })
-                        }
-                        this.loading = false;
-                        if(this.paging.page >= res.data.pages){
-                            this.finished = true;
-                        }
-                        this.paging.page = this.paging.page + 1
+                            }
+                            this.loading = false;
+                            if(this.paging.page >= res.data.pages){
+                                this.finished = true;
+                            }
+                            this.paging.page = this.paging.page + 1
+                        //}
                     }else{
                         this.$notify({ type:'warning', message:res.msg});
                     }
