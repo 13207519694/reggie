@@ -116,8 +116,8 @@ public class UserController {
      * @param session
      * @return
      */
-    @PostMapping("/logout")
-    public R<String> logout( HttpSession session){
+    @PostMapping("/loginout")
+    public R<String> loginout( HttpSession session){
         session.removeAttribute("user");
         return R.success("退出登录成功");
     }

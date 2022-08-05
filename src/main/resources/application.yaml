@@ -33,5 +33,5 @@ mybatis-plus:
     db-config:
       id-type: ASSIGN_ID
 reggie:
-  #path: //home//yanhao//reggiePhoto//
-  path: H:\WorkSpaceIDEA\ReggieImage\
+  path: //home//yanhao//reggiePhoto//
+  #path: H:\WorkSpaceIDEA\ReggieImage\
